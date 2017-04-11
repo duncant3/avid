@@ -629,21 +629,25 @@ public class MatchFinding extends Parser {
 
     public static ArrayList<String> returnNonRepeatStrings(ArrayList<String> listToCheck){
         String temp = "";
-        for (int i = 0; i < listToCheck.size()-1; i++){
-            for (int j = i + 1; j < listToCheck.size()-1; j++)
+        for (int i = 0; i <= listToCheck.size()-1; i++){
+            for (int j = i + 1; j <= listToCheck.size()-1; j++)
                 if (listToCheck.get(j).contains(listToCheck.get(i))){
                     if (Math.abs((j - i)) > 1){
                         temp = listToCheck.get(j);
                         listToCheck.set(j, listToCheck.get(i));
                         listToCheck.set(i, temp);
                         listToCheck.remove(j);
+                        j = i+1;
                     }
                     else {
                         listToCheck.remove(i);
+                        j--;
                     }
-
-                    j--;
             }
+            else if (listToCheck.get(i).contains(listToCheck.get(j))){
+                        listToCheck.remove(j);
+                        j--;
+                }
         }
         System.out.println(listToCheck);
         System.out.println(listToCheck.size());
