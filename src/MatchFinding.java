@@ -4,11 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.io.*;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Created by william on 2017-04-01.
@@ -621,13 +618,36 @@ public class MatchFinding extends Parser {
 
          ArrayList<String> shorterList = new ArrayList<String>();
          for (String s : listToCheck){
-             if (s.length() >= (longestString.length()/2) && !(shorterList.contains(s))){
+             if (s.length() >= Math.ceil((longestString.length()/2.0)) && !(shorterList.contains(s))){
                  if (((seqOne.contains(s) && (seqTwo.contains(s))))) {
                      shorterList.add(s);
                  }
              }
          }
          return shorterList;
+    }
+
+    public static ArrayList<String> returnNonRepeatStrings(ArrayList<String> listToCheck){
+        String temp = "";
+        for (int i = 0; i < listToCheck.size()-1; i++){
+            for (int j = i + 1; j < listToCheck.size()-1; j++)
+                if (listToCheck.get(j).contains(listToCheck.get(i))){
+                    if (Math.abs((j - i)) > 1){
+                        temp = listToCheck.get(j);
+                        listToCheck.set(j, listToCheck.get(i));
+                        listToCheck.set(i, temp);
+                        listToCheck.remove(j);
+                    }
+                    else {
+                        listToCheck.remove(i);
+                    }
+
+                    j--;
+            }
+        }
+        System.out.println(listToCheck);
+        System.out.println(listToCheck.size());
+        return listToCheck;
     }
 
     public static void main(String args[]) throws IOException {
@@ -677,10 +697,15 @@ public class MatchFinding extends Parser {
         longestAns = st.subSequence_2();
         matchesArray = st.ListOfSubseqs;
         long endTime = System.currentTimeMillis();
+        ArrayList<String> longerStringArray = new ArrayList<>();
+        longerStringArray = returnLongerStrings(matchesArray, longestAns, st.FS1, st.FS2);
+        ArrayList<String> reducedLongerStringArray = new ArrayList<>();
+        reducedLongerStringArray = returnNonRepeatStrings(longerStringArray);
         System.out.println("TIME:" + (endTime - startTime) + "ms");
         System.out.println("longestAns is " + longestAns);
         System.out.println("shorter Array is " + returnLongerStrings(matchesArray, longestAns, st.FS1, st.FS2));
         System.out.println("shorter Array is " + returnLongerStrings(matchesArray, longestAns, st.FS1, st.FS2).size());
+        System.out.println("non-repeat array is " + reducedLongerStringArray);
 //        System.out.println("matchesArray is " + matchesArray.size());
         System.out.println(st.ListOfSubseqs.size());
     }
