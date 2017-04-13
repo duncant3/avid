@@ -17,6 +17,7 @@ public class MatchFinding extends Parser {
     Parser parsedFile = new Parser();
     String[] description = parsedFile.getDescription();
     String[] sequence = parsedFile.getSequence();
+    static ArrayList<indexTuple> listOfIndexes = new ArrayList<indexTuple>();
     public MatchFinding() {
         super();
     }
@@ -36,32 +37,41 @@ public class MatchFinding extends Parser {
     }
 
     static class indexTuple{
-        private String fullString;
-        private int firstIndex;
-        private int secondIndex;
+        private int firstIndexFirstSeq;
+        private int lastIndexFirstSeq;
+        private int firstIndexSecondSeq;
+        private int lastIndexSecondSeq;
 
-        public indexTuple(String str, int first, int second){
-            fullString = str;
-            firstIndex = first;
-            secondIndex = second;
+        public indexTuple(int firstIndex_FirstSeq, int lastIndex_FirstSeq, int firstIndex_SecondSeq, int lastIndex_SecondSeq){
+            firstIndexFirstSeq = firstIndex_FirstSeq;
+            lastIndexFirstSeq = lastIndex_FirstSeq;
+            firstIndexSecondSeq = firstIndex_SecondSeq;
+            lastIndexSecondSeq = lastIndex_SecondSeq;
         }
-        public String getFullString(){
-            return fullString;
+        public int getFirstIndexFirstSeq(){
+            return firstIndexFirstSeq;
         }
-        public int getFirstIndex(){
-            return firstIndex;
+        public int getLastIndexFirstSeq(){
+            return lastIndexFirstSeq;
         }
-        public int getSecondIndex(){
-            return secondIndex;
+        public int getFirstIndexSecondSeq(){
+            return firstIndexSecondSeq;
         }
-        public void setFullString(String str){
-            this.fullString = str;
+        public int getLastIndexSecondSeq(){
+            return lastIndexSecondSeq;
         }
-        public void setFirstIndex(int first){
-            this.firstIndex = first;
+
+        public void setFirstIndexFirstSeq(int first){
+            this.firstIndexFirstSeq = first;
         }
-        public void setSecondIndex(int second){
-            this.secondIndex = second;
+        public void setLastIndexFirstSeq(int last){
+            this.lastIndexFirstSeq = last;
+        }
+        public void setFirstIndexSecondSeq(int first){
+            this.firstIndexSecondSeq = first;
+        }
+        public void setLastIndexSecondSeq(int last){
+            this.firstIndexSecondSeq = last;
         }
     }
 
@@ -77,7 +87,6 @@ public class MatchFinding extends Parser {
         private Edge[] Edges ;
         private Node[] Nodes ;
         private Suffix active;
-        private ArrayList<indexTuple> listOfIndexes;
         String longestString = "";
         MatchFinding MF = new MatchFinding();
         String FS1;
@@ -298,88 +307,6 @@ public class MatchFinding extends Parser {
                 System.out.println();
             }
         }
-//        public void dump_edges(int current_n ){
-//            BufferedWriter bw = null;
-//            FileWriter fw = null;
-//            String FILENAME = "out/suffix.txt";
-//            try {
-//                fw = new FileWriter(FILENAME);
-//                bw = new BufferedWriter(fw);
-//
-//                for ( int j = 0 ; j < HASH_TABLE_SIZE ; j++ )
-//                {
-//                    Edge s = Edges[j];
-//                    if ( s.start_node == -1 )
-//                        continue;
-//                    bw.write(String.format("%5d %5d %3d %5d %6d   ", s.start_node , s.end_node, Nodes[ s.end_node ].suffix_node, s.first_char_index, s.last_char_index));
-//                    int top;
-//                    if ( current_n > s.last_char_index )
-//                        top = s.last_char_index;
-//                    else
-//                        top = current_n;
-//                    for ( int l = s.first_char_index ; l <= top; l++) {
-//                        bw.write(T[l]);
-//                    } bw.write("\n");
-//                }
-//                System.out.println("Done");
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            } finally {
-//                try {
-//                    if (bw != null)
-//                        bw.close();
-//                    if (fw != null)
-//                        fw.close();
-//                } catch (IOException ex) {
-//                    ex.printStackTrace();
-//                }
-//            }
-//        }
-
-//        public void subSequence(){
-//
-//            ArrayList<Edge> listofEdges = new ArrayList<Edge>();
-//            for (int i = 0; i < HASH_TABLE_SIZE; i++){
-//                Edge s = Edges[i];
-//                if (s.start_node == -1){
-//                    continue;
-//                }
-//                listofEdges.add(s);
-//            }
-//            char[] stringToCheck = new char[listofEdges.size()];
-//            int currentLongest = 0;
-//            for (int j = 0; j < listofEdges.size(); j++){
-//                Edge s = listofEdges.get(j);
-//                if (Nodes[s.end_node].suffix_node == -1){
-//                    continue;
-//                }
-//                else {
-//                    int top =  s.last_char_index;
-//                    int count = 0;
-//                    for (int l = s.first_char_index; l <= top; l++) {
-//                        stringToCheck[0] = T[l];
-//                        count++;
-//                    }
-//                    if (stringToCheck.length > currentLongest) {
-//                        currentLongest = stringToCheck.length;
-//                    }
-//
-//                    if (listofEdges.get(j).start_node == listofEdges.get(j+1).end_node){
-//                        if (Nodes[s.end_node].suffix_node == -1){
-//                            continue;
-//                        }
-//                        top = listofEdges.get(j+1).last_char_index;
-//                        for (int y = listofEdges.get(j+1).first_char_index; y <= top; y++){
-//                            stringToCheck[count] = T[y];
-//                        }
-//                    }
-////
-//
-//
-//                }
-//            }
-//
-//        }
 
         public String subSequence_2(){
             ArrayList<Edge> listofEdges = new ArrayList<Edge>();
@@ -405,51 +332,6 @@ public class MatchFinding extends Parser {
             returnString = sb.toString();
             return returnString;
         }
-
-        // helper function may have to do check first = last, repeat and build the sequences
-
-
-
-        public ArrayList<Edge> getIndexTrail(ArrayList<Edge> usefulEdges, ArrayList<Edge> allEdges){
-            ArrayList<Edge> toReturn = new ArrayList<>();
-            for (Edge e : allEdges){
-                toReturn.add(e);
-            }
-            ArrayList<Edge> toCheck = usefulEdges;
-            if (toCheck.size() > 1) {
-                for (int i = 0; i < toCheck.size(); i++) {
-                    Edge s = toCheck.get(i);
-                    if (s.start_node == toCheck.get(i + 1).start_node) {
-                        if (getStringFromEdge(s).length() > getStringFromEdge(toCheck.get(i+1)).length()){
-                            toCheck.remove(i+1);
-                        }
-                        else toCheck.remove(i);
-                    }
-                }
-            }
-            for (int i = 0; i < usefulEdges.size(); i++){
-                Edge s = toCheck.get(i);
-                for (int j = 0; j < toReturn.size(); j++){
-                    if (s.end_node == toReturn.get(j).start_node){
-                        toCheck.add(toReturn.get(j));
-                    }
-                }
-            }
-            return toCheck;
-        }
-
-        public String buildStringFromIndexes(ArrayList<Edge> toCheck){
-            String str = "";
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < toCheck.size(); i++){
-                Edge s = toCheck.get(i);
-                sb.append(getStringFromEdge(s));
-            }
-            str = sb.toString();
-            System.out.println("STRING: " + str);
-            return str;
-        }
-
 
         // helper to build the tuples?
         // indexTuple class might also need a key of some sort to ensure we're accessing the right one
@@ -651,7 +533,41 @@ public class MatchFinding extends Parser {
         }
         System.out.println(listToCheck);
         System.out.println(listToCheck.size());
+        Comparator<String> x = new Comparator<String>()
+        {
+            @Override
+            public int compare(String o1, String o2)
+            {
+                if(o1.length() > o2.length())
+                    return -1;
+
+                if(o2.length() > o1.length())
+                    return 1;
+
+                return 0;
+            }
+        };
+
+        Collections.sort(listToCheck, x);
+        System.out.println("SORTED " + listToCheck);
         return listToCheck;
+    }
+
+
+    public static void alignAnchors(String seqOne, String seqTwo, ArrayList<String> anchorList){
+        for (int i = 0; i < anchorList.size(); i++){
+            int seqOneFirst = seqOne.indexOf(anchorList.get(i));
+            int seqOneLast = seqOneFirst + anchorList.get(i).length();
+            int seqTwoFirst = seqTwo.indexOf(anchorList.get(i));
+            int seqTwoLast = seqTwoFirst + anchorList.get(i).length();
+            indexTuple indexToAdd = new indexTuple(seqOneFirst, seqOneLast, seqTwoFirst, seqTwoLast);
+            listOfIndexes.add(indexToAdd);
+        }
+//        for (int i = 0; i <= listOfIndexes.size() - 1; i++){
+//            if (listOfIndexes.get(i+1).firstIndexSecondSeq > )
+//        }
+
+
     }
 
     public static void main(String args[]) throws IOException {
@@ -660,8 +576,8 @@ public class MatchFinding extends Parser {
          String[] testerOne = {"D", "U", "N", "C", "A", "N"};
          String[] testerTwo = {"T", "R", "U", "O", "N", "G", "G"};
 
-        String FS1 = new FastaSequence("seqs/SHORTZaire.FASTA").getSequence();
-        String FS2 = new FastaSequence("seqs/SHORTZika.FASTA").getSequence();
+        String FS1 = new FastaSequence("seqs/TestOne.FASTA").getSequence();
+        String FS2 = new FastaSequence("seqs/TestTwo.FASTA").getSequence();
 
         String[] FS1A = FS1.split("");
         String[] FS2A = FS2.split("");
@@ -710,6 +626,7 @@ public class MatchFinding extends Parser {
         System.out.println("shorter Array is " + returnLongerStrings(matchesArray, longestAns, st.FS1, st.FS2));
         System.out.println("shorter Array is " + returnLongerStrings(matchesArray, longestAns, st.FS1, st.FS2).size());
         System.out.println("non-repeat array is " + reducedLongerStringArray);
+        alignAnchors(FS1, FS2, reducedLongerStringArray);
 //        System.out.println("matchesArray is " + matchesArray.size());
         System.out.println(st.ListOfSubseqs.size());
     }
